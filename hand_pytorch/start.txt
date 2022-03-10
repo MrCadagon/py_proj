@@ -1,0 +1,3 @@
+参考：ttps://tangshusen.me/Dive-into-DL-PyTorch/#/chapter02_prerequisite/2.2_tensor
+
+动手学深度学习-pytorch版本
