@@ -1,0 +1,11 @@
+cd ..
+git status
+git add .
+git commit --amend
+git status
+git push
+
+1210532499@qq.com
+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
+
+11111
