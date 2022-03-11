@@ -9,3 +9,9 @@ git push
 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
 
 11111
+
+# 删除文件
+git add .
+git commit --amend
+git pull
+git push
