@@ -20,6 +20,7 @@ git push
 git add .
 git commit --amend
 git pull
+git push
 
 # 更新文件
 git add .
