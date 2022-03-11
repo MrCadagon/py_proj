@@ -20,4 +20,3 @@ git push
 git add .
 git commit --amend
 git pull
-git push
