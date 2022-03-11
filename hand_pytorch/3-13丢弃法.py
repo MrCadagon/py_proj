@@ -46,4 +46,28 @@ def net(X, is_training=True):
     X = (torch.matmul(X, W2) + b2).relu()
     if is_training:
         X = droupout(X, drop_prob2)
-    X = (torch.matmul(X, W3) + b3)
+    return (torch.matmul(X, W3) + b3)
+
+
+# 训练模型
+num_epochs, lr, batch_size = 5, 100, 256
+loss = torch.nn.CrossEntropyLoss()
+train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size)
+d2l.train_ch3(net, train_iter, test_iter, loss, num_epochs, batch_size, params, lr)
+
+# 简化模型
+net = nn.Sequential(
+    d2l.FlattenLayer(),
+    nn.Linear(num_inputs, num_hiddens1),
+    nn.ReLU(),
+    nn.Dropout(0.2),
+    nn.Linear(num_hiddens1, num_hiddens2),
+    nn.ReLU(),
+    nn.Dropout(0.5),
+    nn.Linear(num_hiddens2, num_outputs)
+)
+for param in params:
+    nn.init.normal(param, mean=0, std=0.01)
+
+optimizer = torch.optim.SGD(net.parameters(), lr=0.5)
+d2l.train_ch3(net, train_iter, test_iter, loss, num_epochs, batch_size, optimizer=optimizer)
