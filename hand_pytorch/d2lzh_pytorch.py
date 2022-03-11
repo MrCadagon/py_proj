@@ -139,3 +139,13 @@ def semilogy(x_vals, y_vals, x_label, y_label, x2_vals=None, y2_vals=None,
         plt.semilogy(x2_vals, y2_vals, linestyle=':')
         plt.legend(legend)
     plt.show()
+
+
+# 3.2
+def linreg(X, w, b):  # 本函数已保存在d2lzh_pytorch包中方便以后使用
+    return torch.mm(X, w) + b
+
+
+def squared_loss(y_hat, y):  # 本函数已保存在d2lzh_pytorch包中方便以后使用
+    # 注意这里返回的是向量, 另外, pytorch里的MSELoss并没有除以 2
+    return (y_hat - y.view(y_hat.size())) ** 2 / 2
