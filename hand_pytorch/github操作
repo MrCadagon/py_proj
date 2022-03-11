@@ -22,8 +22,14 @@ git commit --amend
 git pull
 git push
 
-# 更新文件
+# 上传更新文件
 git add .
 git commit --amend
 git pull
 git push
+
+
+# 下载更新文件
+git status
+git branch --set-upstream-to=origin/master master
+git pull
