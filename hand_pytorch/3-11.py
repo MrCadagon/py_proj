@@ -60,7 +60,7 @@ fit_and_plot(poly_features[:n_train, :], poly_features[n_train:, :],
 fit_and_plot(features[:n_train, :], features[n_train:, :], labels[:n_train],
              labels[n_train:])
 
-# 过拟合
+# 过拟合 样本不足
 fit_and_plot(poly_features[0:2, :], poly_features[n_train:, :], labels[0:2],
              labels[n_train:])
 
