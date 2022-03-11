@@ -1,0 +1,6 @@
+cd ..
+git status
+git add .
+git commit --amend
+git status
+git push
