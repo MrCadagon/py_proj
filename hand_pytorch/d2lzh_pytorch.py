@@ -139,3 +139,31 @@ def semilogy(x_vals, y_vals, x_label, y_label, x2_vals=None, y2_vals=None,
         plt.semilogy(x2_vals, y2_vals, linestyle=':')
         plt.legend(legend)
     plt.show()
+
+
+# 3.2
+def linreg(X, w, b):  # 本函数已保存在d2lzh_pytorch包中方便以后使用
+    return torch.mm(X, w) + b
+
+
+def squared_loss(y_hat, y):  # 本函数已保存在d2lzh_pytorch包中方便以后使用
+    # 注意这里返回的是向量, 另外, pytorch里的MSELoss并没有除以 2
+    return (y_hat - y.view(y_hat.size())) ** 2 / 2
+
+
+# 本函数已保存在d2lzh_pytorch
+def evaluate_accuracy(data_iter, net):
+    acc_sum, n = 0.0, 0
+    for X, y in data_iter:
+        if isinstance(net, torch.nn.Module): # 既有模型
+            net.eval()  # 评估模式, 这会关闭dropout
+            acc_sum += (net(X).argmax(dim=1) == y).float().sum().item()
+            net.train()  # 改回训练模式
+        else:  # 自定义的模型
+            if ('is_training' in net.__code__.co_varnames):  # 如果有is_training这个参数
+                # 将is_training设置成False
+                acc_sum += (net(X, is_training=False).argmax(dim=1) == y).float().sum().item()
+            else:
+                acc_sum += (net(X).argmax(dim=1) == y).float().sum().item()
+        n += y.shape[0]
+    return acc_sum / n
