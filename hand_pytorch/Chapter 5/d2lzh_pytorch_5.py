@@ -1,6 +1,7 @@
 import torch
 from torch import nn
 import time
+import torchvision
 
 def corr2d(X, K):  # 本函数已保存在d2lzh_pytorch包中方便以后使用
     h, w = K.shape
@@ -55,3 +56,19 @@ def train_ch5(net, train_iter, test_iter, batch_size, optimizer, device, num_epo
         print('epoch %d, loss %.4f, train acc %.3f, test acc %.3f, time %.1f sec'
               % (epoch + 1, train_l_sum / batch_count, train_acc_sum / n, test_acc, time.time() - start))
 
+# 本函数已保存在d2lzh_pytorch包中方便以后使用
+def load_data_fashion_mnist(batch_size, resize=None, root='../../../dataset/FashionMNIST'):
+    """Download the fashion mnist dataset and then load into memory."""
+    trans = []
+    if resize:
+        trans.append(torchvision.transforms.Resize(size=resize))
+    trans.append(torchvision.transforms.ToTensor())
+
+    transform = torchvision.transforms.Compose(trans)
+    mnist_train = torchvision.datasets.FashionMNIST(root=root, train=True, download=False, transform=transform)
+    mnist_test = torchvision.datasets.FashionMNIST(root=root, train=False, download=False, transform=transform)
+
+    train_iter = torch.utils.data.DataLoader(mnist_train, batch_size=batch_size, shuffle=True, num_workers=4)
+    test_iter = torch.utils.data.DataLoader(mnist_test, batch_size=batch_size, shuffle=False, num_workers=4)
+
+    return train_iter, test_iter
