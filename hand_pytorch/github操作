@@ -33,3 +33,7 @@ git push
 git status
 git branch --set-upstream-to=origin/master master
 git pull
+
+
+sudo git config --system --unset credential.helper
+sudo git config --global credential.helper store
