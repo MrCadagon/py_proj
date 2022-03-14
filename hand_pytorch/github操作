@@ -7,6 +7,7 @@ git push
 
 1210532499@qq.com
 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
+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
 
 11111
 
@@ -33,3 +34,7 @@ git push
 git status
 git branch --set-upstream-to=origin/master master
 git pull
+
+
+sudo git config --system --unset credential.helper
+sudo git config --global credential.helper store
