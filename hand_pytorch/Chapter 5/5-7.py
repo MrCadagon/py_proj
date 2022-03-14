@@ -72,3 +72,5 @@ train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size, resize=224)
 lr, num_epochs = 0.001, 20
 optimizer = torch.optim.Adam(net.parameters(), lr=lr)
 d2l.train_ch5(net, train_iter, test_iter, batch_size, optimizer, device, num_epochs)
+
+

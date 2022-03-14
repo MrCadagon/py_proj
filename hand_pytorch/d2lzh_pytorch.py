@@ -9,6 +9,7 @@ import torchvision.transforms as transforms
 from torch import nn
 import time as time
 
+
 def use_svg_display():
     # 用矢量图显示
     display.set_matplotlib_formats('svg')
@@ -155,7 +156,7 @@ def squared_loss(y_hat, y):  # 本函数已保存在d2lzh_pytorch包中方便以
 def evaluate_accuracy(data_iter, net):
     acc_sum, n = 0.0, 0
     for X, y in data_iter:
-        if isinstance(net, torch.nn.Module): # 既有模型
+        if isinstance(net, torch.nn.Module):  # 既有模型
             net.eval()  # 评估模式, 这会关闭dropout
             acc_sum += (net(X).argmax(dim=1) == y).float().sum().item()
             net.train()  # 改回训练模式
@@ -177,6 +178,7 @@ def corr2d(X, K):  # 本函数已保存在d2lzh_pytorch包中方便以后使用
             Y[i, j] = (X[i: i + h, j: j + w] * K).sum()
     return Y
 
+
 # 本函数已保存在d2lzh_pytorch包中方便以后使用。该函数将被逐步改进。
 def evaluate_accuracy(data_iter, net, device=None):
     if device is None and isinstance(net, torch.nn.Module):
@@ -186,11 +188,11 @@ def evaluate_accuracy(data_iter, net, device=None):
     with torch.no_grad():
         for X, y in data_iter:
             if isinstance(net, torch.nn.Module):
-                net.eval() # 评估模式, 这会关闭dropout
+                net.eval()  # 评估模式, 这会关闭dropout
                 acc_sum += (net(X.to(device)).argmax(dim=1) == y.to(device)).float().sum().cpu().item()
-                net.train() # 改回训练模式
-            else: # 自定义的模型, 3.13节之后不会用到, 不考虑GPU
-                if('is_training' in net.__code__.co_varnames): # 如果有is_training这个参数
+                net.train()  # 改回训练模式
+            else:  # 自定义的模型, 3.13节之后不会用到, 不考虑GPU
+                if ('is_training' in net.__code__.co_varnames):  # 如果有is_training这个参数
                     # 将is_training设置成False
                     acc_sum += (net(X, is_training=False).argmax(dim=1) == y).float().sum().item()
                 else:
@@ -222,6 +224,7 @@ def train_ch5(net, train_iter, test_iter, batch_size, optimizer, device, num_epo
         print('epoch %d, loss %.4f, train acc %.3f, test acc %.3f, time %.1f sec'
               % (epoch + 1, train_l_sum / batch_count, train_acc_sum / n, test_acc, time.time() - start))
 
+
 # 本函数已保存在d2lzh_pytorch包中方便以后使用
 def load_data_fashion_mnist(batch_size, resize=None, root='../dataset/FashionMNIST'):
     """Download the fashion mnist dataset and then load into memory."""
@@ -238,3 +241,12 @@ def load_data_fashion_mnist(batch_size, resize=None, root='../dataset/FashionMNI
     test_iter = torch.utils.data.DataLoader(mnist_test, batch_size=batch_size, shuffle=False, num_workers=4)
 
     return train_iter, test_iter
+
+# 5-8
+import torch.nn.functional as F
+class GlobalAvgPool2d(nn.Module):
+    # 全局平均池化层可通过将池化窗口形状设置成输入的高和宽实现
+    def __init__(self):
+        super(GlobalAvgPool2d, self).__init__()
+    def forward(self, x):
+        return F.avg_pool2d(x, kernel_size=x.size()[2:])
