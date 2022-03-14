@@ -2,8 +2,8 @@ import torch
 from torch import nn
 import sys
 
-sys.path.append(".")
-import d2lzh_pytorch_5 as d2l
+sys.path.append("../")
+import d2lzh_pytorch as d2l
 
 
 # 输入多通道

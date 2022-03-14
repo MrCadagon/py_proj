@@ -4,11 +4,9 @@ from torch import nn, optim
 
 import sys
 
-sys.path.append(".")
-sys.path.append(".")
-sys.path.append("../Chapter 3/")
-import d2lzh_pytorch_5 as d2l
-import d2lzh_pytorch as d2l_3
+
+sys.path.append("../")
+import d2lzh_pytorch as d2l
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -38,7 +36,7 @@ def vgg(conv_arch, fc_features, fc_hidden_units=4096):
     for i, (num_convs, in_c, out_c) in enumerate(conv_arch):
         net.add_module("vgg_block_" + str(i), vgg_block(num_convs, in_c, out_c))
         # 全连接
-    net.add_module("fc", nn.Sequential(d2l_3.FlattenLayer(),
+    net.add_module("fc", nn.Sequential(d2l.FlattenLayer(),
                                        nn.Linear(fc_features, fc_hidden_units),
                                        nn.ReLU(),
                                        nn.Dropout(0.5),

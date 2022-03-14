@@ -16,7 +16,6 @@
 import torch
 import torchvision
 import torchvision.transforms as transforms
-import matplotlib.pyplot as plt
 import time
 import sys
 

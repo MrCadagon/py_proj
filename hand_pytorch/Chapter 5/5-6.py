@@ -11,8 +11,8 @@ import torchvision
 
 import sys
 
-sys.path.append("..")
-import d2lzh_pytorch_5 as d2l
+sys.path.append("../")
+import d2lzh_pytorch as d2l
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
