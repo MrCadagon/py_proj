@@ -7,10 +7,8 @@ import torch
 from torch import nn, optim
 
 import sys
-sys.path.append(".")
-sys.path.append("../Chapter 3/")
-import d2lzh_pytorch_5 as d2l
-import d2lzh_pytorch as d2l_3
+sys.path.append("../")
+import d2lzh_pytorch as d2l
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # 实现LeNet模型
@@ -43,7 +41,7 @@ print(net)
 
 
 batch_size = 256
-train_iter, test_iter = d2l_3.load_data_fashion_mnist(batch_size=batch_size)
+train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size=batch_size)
 
 
 lr, num_epochs = 0.001, 5

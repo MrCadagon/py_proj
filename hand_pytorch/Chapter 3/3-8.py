@@ -2,8 +2,6 @@
 
 
 import torch
-import numpy as np
-import matplotlib.pylab as plt
 import sys
 
 sys.path.append("..")

@@ -2,8 +2,8 @@ import torch
 import sys
 import torch.nn as nn
 
-sys.path.append('.')
-import d2lzh_pytorch_5 as d2l
+sys.path.append('../')
+import d2lzh_pytorch as d2l
 
 X = torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8]])
 K = torch.tensor([[0, 1], [2, 3]])
