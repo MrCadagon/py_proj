@@ -237,16 +237,22 @@ def load_data_fashion_mnist(batch_size, resize=None, root='../dataset/FashionMNI
     mnist_train = torchvision.datasets.FashionMNIST(root=root, train=True, download=True, transform=transform)
     mnist_test = torchvision.datasets.FashionMNIST(root=root, train=False, download=True, transform=transform)
 
-    train_iter = torch.utils.data.DataLoader(mnist_train, batch_size=batch_size, shuffle=True, num_workers=4)
-    test_iter = torch.utils.data.DataLoader(mnist_test, batch_size=batch_size, shuffle=False, num_workers=4)
+    train_iter = torch.utils.data.DataLoader(mnist_train, batch_size=batch_size, shuffle=True, num_workers=16,
+                                             pin_memory=True)  # 4
+    test_iter = torch.utils.data.DataLoader(mnist_test, batch_size=batch_size, shuffle=False, num_workers=16,
+                                            pin_memory=True)  # 4
 
     return train_iter, test_iter
 
+
 # 5-8
 import torch.nn.functional as F
+
+
 class GlobalAvgPool2d(nn.Module):
     # 全局平均池化层可通过将池化窗口形状设置成输入的高和宽实现
     def __init__(self):
         super(GlobalAvgPool2d, self).__init__()
+
     def forward(self, x):
         return F.avg_pool2d(x, kernel_size=x.size()[2:])
