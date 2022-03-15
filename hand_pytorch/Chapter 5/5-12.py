@@ -100,3 +100,6 @@ lr, num_epochs = 0.001, 20
 optimizer = torch.optim.Adam(net.parameters(), lr=lr)
 d2l.train_ch5(net, train_iter, test_iter, batch_size, optimizer, device, num_epochs)
 
+
+# 在跨层连接上，不同于ResNet中将输入与输出相加，DenseNet在通道维上连结输入与输出。
+# DenseNet的主要构建模块是稠密块和过渡层。

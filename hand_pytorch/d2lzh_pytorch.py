@@ -256,3 +256,5 @@ class GlobalAvgPool2d(nn.Module):
 
     def forward(self, x):
         return F.avg_pool2d(x, kernel_size=x.size()[2:])
+
+#6-3
