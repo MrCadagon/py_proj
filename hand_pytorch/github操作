@@ -42,3 +42,12 @@ git pull
 
 sudo git config --system --unset credential.helper
 sudo git config --global credential.helper store
+<<<<<<< HEAD
+
+
+315 sha秘钥失效
+ssh-keygen -t ed25519 -C "<comment>"
+复制秘钥至github
+测试：ssh -T git@github.com
+=======
+>>>>>>> 4ed8fc2d2fed3609e348f1b1aa99b7390466c47e
