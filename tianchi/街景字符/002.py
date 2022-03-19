@@ -35,9 +35,9 @@ class SVHNDataset(Dataset):
         return len(self.img_path)
 
 
-train_path = glob.glob('../input/train/*.png')
+train_path = glob.glob('./mchar_train/train/*.png')
 train_path.sort()
-train_json = json.load(open('../input/train.json'))
+train_json = json.load(open('./file_josn/train.json'))
 train_label = [train_json[x]['label'] for x in train_json]
 
 data = SVHNDataset(train_path, train_label,
