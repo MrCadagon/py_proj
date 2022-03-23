@@ -17,8 +17,10 @@ def main():
     net = LeNet()
     net.load_state_dict(torch.load('Lenet.pth'))
 
-    im = Image.open('1.jpg')
+    im = Image.open('download.jpeg')
     im = transform(im)  # [C, H, W]
+
+    # 增加一个新的维度
     im = torch.unsqueeze(im, dim=0)  # [N, C, H, W]
 
     with torch.no_grad():

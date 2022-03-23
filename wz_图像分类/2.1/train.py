@@ -16,7 +16,7 @@ def main():
     # 50000张训练图片
     # 第一次使用时要将download设置为True才会自动去下载数据集
     train_set = torchvision.datasets.CIFAR10(root='./data', train=True,
-                                             download=False, transform=transform)
+                                             download=True, transform=transform)
 
     # **DataLoader:分成批次
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=36,
