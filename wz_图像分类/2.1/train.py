@@ -8,7 +8,7 @@ import torchvision.transforms as transforms
 
 def main():
 
-    # 图像预处理
+    # **图像预处理
     transform = transforms.Compose(
         [transforms.ToTensor(),
          transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
@@ -18,7 +18,7 @@ def main():
     train_set = torchvision.datasets.CIFAR10(root='./data', train=True,
                                              download=False, transform=transform)
 
-    # DataLoader:分成批次
+    # **DataLoader:分成批次
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=36,
                                                shuffle=True, num_workers=8)
 
@@ -36,6 +36,8 @@ def main():
     # classes = ('plane', 'car', 'bird', 'cat',
     #            'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
 
+    # ** transpose():转换通道数
+
     net = LeNet()
     loss_function = nn.CrossEntropyLoss()
     optimizer = optim.Adam(net.parameters(), lr=0.001)
@@ -48,6 +50,9 @@ def main():
             inputs, labels = data
 
             # zero the parameter gradients
+
+            # **atchsize 越大训练效果越好，梯度累加则实现了 batchsize 的变相扩大，如果accumulation_steps 为 8
+            # **如果不清零 相当于变相增加batch_size
             optimizer.zero_grad()
             # forward + backward + optimize
             outputs = net(inputs)
@@ -56,6 +61,7 @@ def main():
             optimizer.step()
 
             # print statistics
+            # ***防止测测试batch——size过大 导致崩溃
             running_loss += loss.item()
             if step % 500 == 499:    # print every 500 mini-batches
                 with torch.no_grad():
