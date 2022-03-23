@@ -73,3 +73,7 @@ plt.show()
 edges = cv2.Canny(img, 30, 70)
 plt.imshow(edges, cmap='gray')
 plt.show()
+
+
+# Task3 字符识别模型
+
