@@ -6,16 +6,17 @@ from PIL import Image
 from torchvision import transforms
 import matplotlib.pyplot as plt
 
-from model import GoogLeNet
+from model import resnet34
 
 
 def main():
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     data_transform = transforms.Compose(
-        [transforms.Resize((224, 224)),
+        [transforms.Resize(256),
+         transforms.CenterCrop(224),
          transforms.ToTensor(),
-         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
 
     # load image
     img_path = "../tulip.jpg"
@@ -35,16 +36,14 @@ def main():
     class_indict = json.load(json_file)
 
     # create model
-    model = GoogLeNet(num_classes=5, aux_logits=False).to(device)
+    model = resnet34(num_classes=5).to(device)
 
     # load model weights
-    weights_path = "./googleNet.pth"
+    weights_path = "./resNet34.pth"
     assert os.path.exists(weights_path), "file: '{}' dose not exist.".format(weights_path)
+    model.load_state_dict(torch.load(weights_path, map_location=device))
 
-    # **将aux部分参数放到unexpected_keys中
-    missing_keys, unexpected_keys = model.load_state_dict(torch.load(weights_path, map_location=device),
-                                                          strict=False)
-
+    # prediction
     model.eval()
     with torch.no_grad():
         # predict class

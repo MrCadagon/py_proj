@@ -92,6 +92,8 @@ class GoogLeNet(nn.Module):
         x = self.dropout(x)
         x = self.fc(x)
         # N x 1000 (num_classes)
+
+        # **train阶段输出三个值
         if self.training and self.aux_logits:   # eval model lose this layer
             return x, aux2, aux1
         return x
@@ -154,6 +156,8 @@ class InceptionAux(nn.Module):
         x = self.conv(x)
         # N x 128 x 4 x 4
         x = torch.flatten(x, 1)
+
+        # **用于model train eval两种模式下的转换
         x = F.dropout(x, 0.5, training=self.training)
         # N x 2048
         x = F.relu(self.fc1(x), inplace=True)
