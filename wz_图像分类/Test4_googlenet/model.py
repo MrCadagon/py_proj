@@ -137,9 +137,11 @@ class Inception(nn.Module):
         branch4 = self.branch4(x)
 
         outputs = [branch1, branch2, branch3, branch4]
+
+        # 再channel上拼接
         return torch.cat(outputs, 1)
 
-
+# 辅助分类器
 class InceptionAux(nn.Module):
     def __init__(self, in_channels, num_classes):
         super(InceptionAux, self).__init__()

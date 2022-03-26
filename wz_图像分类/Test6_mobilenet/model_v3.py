@@ -4,8 +4,10 @@ import torch
 from torch import nn, Tensor
 from torch.nn import functional as F
 from functools import partial
-
+# **改进点：更新block
 # **SE模块【注意力机制】：对每个 channel池化处理，再用FC，对每个channel得到权重。 再用权重乘各个层
+
+
 # **精简32-16卷积核的个数。 精简last stage
 # **使用新的激活函数：h-swish【swish计算 求导复杂 量化不友好】=x*6relu()
 
@@ -24,7 +26,7 @@ def _make_divisible(ch, divisor=8, min_ch=None):
         new_ch += divisor
     return new_ch
 
-
+# BN conv
 class ConvBNActivation(nn.Sequential):
     def __init__(self,
                  in_planes: int,
@@ -49,7 +51,7 @@ class ConvBNActivation(nn.Sequential):
                                                norm_layer(out_planes),
                                                activation_layer(inplace=True))
 
-
+# 注意力机制
 class SqueezeExcitation(nn.Module):
     def __init__(self, input_c: int, squeeze_factor: int = 4):
         super(SqueezeExcitation, self).__init__()
@@ -65,7 +67,7 @@ class SqueezeExcitation(nn.Module):
         scale = F.hardsigmoid(scale, inplace=True)
         return scale * x
 
-
+# 整体的结构
 class InvertedResidualConfig:
     def __init__(self,
                  input_c: int,
@@ -120,6 +122,7 @@ class InvertedResidual(nn.Module):
                                        norm_layer=norm_layer,
                                        activation_layer=activation_layer))
 
+        # SE模块
         if cnf.use_se:
             layers.append(SqueezeExcitation(cnf.expanded_c))
 
@@ -136,6 +139,7 @@ class InvertedResidual(nn.Module):
 
     def forward(self, x: Tensor) -> Tensor:
         result = self.block(x)
+        # shortcut
         if self.use_res_connect:
             result += x
 
@@ -145,6 +149,7 @@ class InvertedResidual(nn.Module):
 class MobileNetV3(nn.Module):
     def __init__(self,
                  inverted_residual_setting: List[InvertedResidualConfig],
+                 # 倒数第二个fc 1280
                  last_channel: int,
                  num_classes: int = 1000,
                  block: Optional[Callable[..., nn.Module]] = None,
@@ -161,6 +166,7 @@ class MobileNetV3(nn.Module):
             block = InvertedResidual
 
         if norm_layer is None:
+            # 输入nn.BatchNorm2d默认值
             norm_layer = partial(nn.BatchNorm2d, eps=0.001, momentum=0.01)
 
         layers: List[nn.Module] = []

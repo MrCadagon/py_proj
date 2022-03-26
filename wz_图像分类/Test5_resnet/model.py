@@ -45,6 +45,7 @@ class BasicBlock(nn.Module):
         out = self.conv2(out)
         out = self.bn2(out)
 
+        # 捷径分支
         out += identity
         out = self.relu(out)
 

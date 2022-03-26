@@ -26,15 +26,18 @@ import torch.nn as nn
 def channel_shuffle(x: Tensor, groups: int) -> Tensor:
 
     batch_size, num_channels, height, width = x.size()
+
+    # 划分为g个组
     channels_per_group = num_channels // groups
 
     # reshape
     # [batch_size, num_channels, height, width] -> [batch_size, groups, channels_per_group, height, width]
     x = x.view(batch_size, groups, channels_per_group, height, width)
 
+    # groups channels_per_group调换 contiguous保证连续
     x = torch.transpose(x, 1, 2).contiguous()
 
-    # flatten
+    # flatten 相当于shuffle 蓝黄红蓝黄红以此排列
     x = x.view(batch_size, -1, height, width)
 
     return x
@@ -48,12 +51,16 @@ class InvertedResidual(nn.Module):
             raise ValueError("illegal stride value.")
         self.stride = stride
 
+        # 左右channel相同
         assert output_c % 2 == 0
         branch_features = output_c // 2
         # 当stride为1时，input_channel应该是branch_features的两倍
         # python中 '<<' 是位运算，可理解为计算×2的快速方法
         assert (self.stride != 1) or (input_c == branch_features << 1)
 
+
+        # branch1
+        # 图D
         if self.stride == 2:
             self.branch1 = nn.Sequential(
                 self.depthwise_conv(input_c, input_c, kernel_s=3, stride=self.stride, padding=1),
@@ -62,10 +69,13 @@ class InvertedResidual(nn.Module):
                 nn.BatchNorm2d(branch_features),
                 nn.ReLU(inplace=True)
             )
+        # 图C
         else:
             self.branch1 = nn.Sequential()
 
+        # branch2
         self.branch2 = nn.Sequential(
+            # 只有步距不同
             nn.Conv2d(input_c if self.stride > 1 else branch_features, branch_features, kernel_size=1,
                       stride=1, padding=0, bias=False),
             nn.BatchNorm2d(branch_features),

@@ -2,11 +2,21 @@ from torch import nn
 import torch
 
 
+# **放在嵌入式
+# **准确率小幅减少 参数数量只有1/32： 超参数：卷积合核数量
+
+# **普通卷积计算量是DW+PW的9倍
+# **DW卷积：一个卷积核跟一个channel运算 输入channel=卷积核数量=输出channel 减少参数  1/N
+# **PW卷积：卷积为1*1 1/9[卷积核 3*3]
+# **超参数：卷基层 卷积核的超参数 图像大小超参数
+# 缺点：V1网络DW卷积大部分参数等于0
+
 # **基本单元是深度级可分离卷积： DW PW
 #  **V2
-#  倒残差结构：11升维- conv 11降维  ：增加计算量 提升精度
+#  **倒残差结构：11升维- conv 11降维  ：增加计算量 提升精度
 #  **使用Relu6【最大输出为6】
-# **Relu对低纬信息会有损失 使用线性激活
+# **Relu对低纬信息会有损失 最后一个倒残差结构使用线性激活
+# n:几层bn层 s:第一层步距
 # 部分有捷径结构：s=1并且输入输出shpae相同
 
 
@@ -35,11 +45,12 @@ class ConvBNReLU(nn.Sequential):
             nn.ReLU6(inplace=True)
         )
 
-
+# 倒残差结构  窄宽窄
 class InvertedResidual(nn.Module):
     def __init__(self, in_channel, out_channel, stride, expand_ratio):
         super(InvertedResidual, self).__init__()
         hidden_channel = in_channel * expand_ratio
+        # 捷径的条件
         self.use_shortcut = stride == 1 and in_channel == out_channel
 
         layers = []
