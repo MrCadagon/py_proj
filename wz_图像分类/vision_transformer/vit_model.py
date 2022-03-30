@@ -232,6 +232,7 @@ class VisionTransformer(nn.Module):
         self.norm = norm_layer(embed_dim)
 
         # Representation layer
+        # **图片中的pre-logs
         if representation_size and not distilled:
             self.has_logits = True
             self.num_features = representation_size
@@ -257,6 +258,7 @@ class VisionTransformer(nn.Module):
         nn.init.trunc_normal_(self.cls_token, std=0.02)
         self.apply(_init_vit_weights)
 
+    # patch embedding    batch扩维    196 cls_token拼接-》197    transencodr
     def forward_features(self, x):
         # [B, C, H, W] -> [B, num_patches, embed_dim]
         x = self.patch_embed(x)  # [B, 196, 768]
@@ -285,6 +287,7 @@ class VisionTransformer(nn.Module):
             else:
                 return (x + x_dist) / 2
         else:
+            # 线性层
             x = self.head(x)
         return x
 
