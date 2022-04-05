@@ -45,6 +45,7 @@ class Conv2d(module.Module):
         self.storage.update({'x_cols': x_cols, 'weight_cols': weight_cols})
         feats = weight_cols.dot(x_cols) + self.bias
         feats = feats.reshape(self.outputsize(x)[1:] + (batch_size,)).transpose(3, 0, 1, 2)
+        print(feats.shape)
         return feats
     '''定义反向传播'''
     def backward(self, accumulated_gradient):

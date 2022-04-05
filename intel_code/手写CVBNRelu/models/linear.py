@@ -47,11 +47,17 @@ class Linear(module.Module):
             # 计算梯度
             grad_w = self.storage['x'].T.dot(accumulated_gradient)
             grad_b = np.sum(accumulated_gradient, axis=0, keepdims=True)
+
             # 根据梯度更新weight
+            # ***获得sgd的梯度direction和结果params
             results = self.update(self.weight, grad_w, self.storage['direction']['weight'])
+            # ***利用sgd的结果 更新自身的direction和结果params
             self.weight, self.storage['direction']['weight'] = results['params'], results['direction']
+
             # 根据梯度更新bias
+            # ***获得sgd的梯度direction和结果params
             results = self.update(self.bias, grad_b, self.storage['direction']['bias'])
+            # ***利用sgd的结果 更新自身的direction和结果params
             self.bias, self.storage['direction']['bias'] = results['params'], results['direction']
         return accumulated_gradient.dot(weight.T)
 

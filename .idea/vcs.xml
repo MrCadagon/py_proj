@@ -3,6 +3,8 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CNN_from_scratch" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CS231N-Spring-2021" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cs231n" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/deep-learning-for-image-processing" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/deep-learning-from-scratch" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/hand_pytorch/Dive-into-DL-PyTorch" vcs="Git" />
