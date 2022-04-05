@@ -4,6 +4,8 @@
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CNN_from_scratch" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CS231N-Spring-2021" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CS231nAssignment" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CS231nAssignment/assignment2/cs231n/datasets/cs231n" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/cs231n" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/deep-learning-for-image-processing" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/deep-learning-from-scratch" vcs="Git" />
