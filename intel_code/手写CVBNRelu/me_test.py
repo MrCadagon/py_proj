@@ -31,7 +31,6 @@ criterion = criterion.CrossEntropy()
 # 定义优化器
 optimzer = sgd.SGD(cnn, criterion=criterion, learning_rate=0.001, momentum=0.9)
 
-
 # 导入数据集
 # --手写数字数据集
 data = datasets.load_digits()
@@ -60,12 +59,13 @@ for epoch in range(epochs):
         losses_log.append(loss)
         losses_batch.append(loss)
         if len(losses_log) == 20:
-            print(f'Epoch: {epoch+1}/10, Batch: {idx+1}/{math.ceil(trainset[0].shape[0] / 32)}, Loss: {sum(losses_log) / len(losses_log)}')
+            print(
+                f'Epoch: {epoch + 1}/10, Batch: {idx + 1}/{math.ceil(trainset[0].shape[0] / 32)}, Loss: {sum(losses_log) / len(losses_log)}')
             losses_log = []
     # 每个epoch结束之后测试一下模型准确性
     predictions = cnn(valset[0]).argmax(1)
     acc = np.equal(predictions, valset[1].argmax(1)).sum() / predictions.shape[0]
-    print(f'Accuracy of Epoch {epoch+1} is {acc}')
+    print(f'Accuracy of Epoch {epoch + 1} is {acc}')
     vis_infos.append([acc, sum(losses_batch) / len(losses_batch)])
     losses_batch = []
 # 画下loss曲线和acc曲线
@@ -73,3 +73,9 @@ plt.plot(range(epochs), [i[0] for i in vis_infos], marker='o', label='Accuracy')
 plt.plot(range(epochs), [i[1] for i in vis_infos], marker='*', label='Loss')
 plt.legend()
 plt.show()
+
+# 参考：
+# https://zhuanlan.zhihu.com/p/100672008
+# https://blog.csdn.net/qq1145520074/article/details/79151948
+# https://zhuanlan.zhihu.com/p/102119808
+# https://blog.csdn.net/m0_45388819/article/details/119818716

@@ -40,7 +40,7 @@ class Linear(module.Module):
         return feats
 
     '''定义反向传播'''
-
+    # accumulated_gradient 为累计梯度
     def backward(self, accumulated_gradient):
         weight = self.weight
         if self.training:

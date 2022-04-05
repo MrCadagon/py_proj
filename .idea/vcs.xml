@@ -4,6 +4,7 @@
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CNN_from_scratch" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/deep-learning-for-image-processing" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/deep-learning-from-scratch" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/hand_pytorch/Dive-into-DL-PyTorch" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/handson-ml2" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/pytoydl" vcs="Git" />
