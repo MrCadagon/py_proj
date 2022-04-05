@@ -79,3 +79,6 @@ plt.show()
 # https://blog.csdn.net/qq1145520074/article/details/79151948
 # https://zhuanlan.zhihu.com/p/102119808
 # https://blog.csdn.net/m0_45388819/article/details/119818716
+
+# BN实现
+# https://www.bianchengquan.com/article/242388.html
