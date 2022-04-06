@@ -56,7 +56,7 @@ def conv_forward_naive(x, w, b, conv_param):
       W' = 1 + (W + 2 * pad - WW) / stride
     - cache: (x, w, b, conv_param)
     """
-    out = None
+    # out = None
     ###########################################################################
     # Implement the convolutional forward pass.                               #
     # Hint: you can use the function np.pad for padding.                      #
