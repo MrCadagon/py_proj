@@ -357,7 +357,7 @@ print(test2)
 a = torch.rand(1, 2, 3, 4, requires_grad=True, dtype=torch.double)
 print(torch.autograd.gradcheck(BatchNorm.apply, (a,), fast_mode=False))
 
-# # # # 混合卷积验证
+# 混合卷积验证
 weight = torch.rand(5, 3, 3, 3, requires_grad=True, dtype=torch.double)
 X = torch.rand(2, 3, 4, 4, requires_grad=True, dtype=torch.double)
 print(torch.autograd.gradcheck(FusedConvBN2DFunction_2.apply, (X, weight), eps=1e-3))
