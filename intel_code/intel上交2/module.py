@@ -2,6 +2,7 @@ import torch
 from torch.autograd.function import once_differentiable
 import torch.nn.functional as F
 import numpy as np
+import torch.nn as nn
 
 
 def conv2d_backward(grad_out, X, weight):
@@ -135,6 +136,29 @@ class FusedConv_BN_Relu_2D_Function(torch.autograd.Function):
         return grad_X, grad_input, None, None, None, None, None
 
 
+import math
+
+class FusedConvBN(nn.Module):
+    def __init__(self, in_channels, out_channels, kernel_size, exp_avg_factor=0.1,
+                 eps=1e-3, device=None, dtype=None):
+        super(FusedConvBN, self).__init__()
+        factory_kwargs = {'device': device, 'dtype': dtype}
+        # Conv parameters
+        weight_shape = (out_channels, in_channels, kernel_size, kernel_size)
+        self.conv_weight = nn.Parameter(torch.empty(*weight_shape, **factory_kwargs))
+        # Batch norm parameters
+        num_features = out_channels
+        self.num_features = num_features
+        self.eps = eps
+        # Initialize
+        self.reset_parameters()
+
+    def forward(self, X):
+        return FusedConv_BN_Relu_2D_Function.apply(X, self.conv_weight, self.eps)
+
+    def reset_parameters(self) -> None:
+        nn.init.kaiming_uniform_(self.conv_weight, a=math.sqrt(5))
+
 # 卷积验证
 weight = torch.rand(5, 3, 3, 3, requires_grad=True, dtype=torch.double)
 X = torch.rand(10, 3, 7, 7, requires_grad=True, dtype=torch.double)
@@ -157,51 +181,64 @@ weight = torch.rand(5, 3, 3, 3, requires_grad=True, dtype=torch.double)
 X = torch.rand(2, 3, 4, 4, requires_grad=True, dtype=torch.double)
 print(torch.autograd.gradcheck(FusedConv_BN_Relu_2D_Function.apply, (X, weight), eps=1e-3))
 
-# FLOPS测试
+# # FLOPS测试
 from torchstat import stat
-import torchvision.models as models
 
 
-model = models.resnet18()
-# model = FusedConv_BN_Relu_2D_Function()
-stat(model, (3, 224, 224))
+
+
+
+
+
+# FLOPS
+class LeNet(nn.Module):
+    def __init__(self, in_channels):
+        super(LeNet, self).__init__()
+        self.conv1 = nn.Conv2d(in_channels, 20, kernel_size=3, stride=1)  # 20x24x24
+        self.bn1 = nn.BatchNorm2d(20)
+        self.relu = nn.ReLU()
+
+    def forward(self, input):
+        out = self.conv1(input)
+        out = self.bn1(out)
+        out = self.relu(out)
+        return out
+
+
+
+class Net1(nn.Module):
+    def __init__(self,in_channels):
+        super(Net1, self).__init__()
+        self.convbn1 = FusedConvBN(in_channels, 20, 3)
+
+    def forward(self, input):
+        out = self.convbn1(input)
+        return out
+
+
+model = LeNet(10)
+model2 = Net1(10)
+
+stat(model, (10, 224, 224))
+stat(model2, (10, 224, 224))
+
+# http://t.zoukankan.com/xuanyuyt-p-12653041.html
 
 # # FLOPS测试
 # import torch
 # from torchvision.models import resnet18
 # from thop import profile
 # model = resnet18()
-# model = FusedConv_BN_Relu_2D_Function()
-# input = torch.randn(1, 3, 128, 128)
-# flops, params = profile(model, inputs=(input, ))
+# # model = FusedConv_BN_Relu_2D_Function()
+# input = torch.randn(10, 10, 128, 128)
+# flops, params = profile(model2, inputs=(input, ))
 # print('flops:{}'.format(flops))
 # print('params:{}'.format(params))
 
 
-import torch.nn as nn
-# FLOPS
-class LeNet(nn.Module):
-    def __init__(self, in_channels, num_classes):
-        super(LeNet, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels, 20, kernel_size=5, stride=1)  # 20x24x24
-        self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)  # 20x12x12
-        self.conv2 = nn.Conv2d(20, 50, kernel_size=5, stride=1)  # 50x8x8
-        self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)  # 50x4x4
-        self.fc1 = nn.Linear(50 * 4 * 4, 500)  # 500
-        self.fc2 = nn.Linear(500, num_classes)  # 10
 
-    def forward(self, input):
-        out = self.conv1(input)
-        out = self.pool1(out)
-        out = self.conv2(out)
-        out = self.pool2(out)
-        out = out.reshape(out.size(0), -1)  # pytorch folow NCHW convention
-        out = F.relu(self.fc1(out))
-        out = self.fc2(out)
-        return out
-
-
-model = LeNet(1, 10)
-stat(model, (3, 224, 224))
-
-# http://t.zoukankan.com/xuanyuyt-p-12653041.html
+inp = torch.rand(1,2,3,4)
+active_elements_count=1
+for s in inp.size()[1:]:
+    print(s)
+    active_elements_count *= s
