@@ -1,0 +1,10 @@
+运行该工程：
+1.在python3下运行Test.py中的主函数
+
+
+该文件主要完成以下工作：
+1.在Modules.py中完成了Conv2D, BatchNorm, Relu的前向以及反向传播函数，并在Test.py的conv_bn_relu_verify函数中利用torch.autograd.gradcheck进行检验这些函数的正确性
+2.为了减少memory，在Modules.py中完成了FusedConv_BN_Relu_2D的的前向和反向传播函数，并在Test.py的conv_bn_relu_verify函数中利用torch.autograd.gradcheck进行检验这些函数的正确性
+3.在Flops_compute.py中完成了Conv2D, BatchNorm, Relu的FLOPs计算函数,并在Test.py中Flops_verify函数中计算各个部分实践也理论FLOPs的比值
+
+

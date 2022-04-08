@@ -1,9 +1,6 @@
 import torch
-from torch.autograd.function import once_differentiable
 import torch.nn.functional as F
 import numpy as np
-import torch.nn as nn
-import math
 
 
 def conv2d_backward(grad_out, X, weight):
@@ -135,90 +132,4 @@ class FusedConv_BN_Relu_2D(torch.autograd.Function):
         grad_X, grad_input = conv2d_backward(grad_out, X, conv_weight)
 
         return grad_X, grad_input, None, None, None, None, None
-
-
-class FusedConvBN(nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size, exp_avg_factor=0.1,
-                 eps=1e-3, device=None, dtype=None):
-        super(FusedConvBN, self).__init__()
-        factory_kwargs = {'device': device, 'dtype': dtype}
-        # Conv parameters
-        weight_shape = (out_channels, in_channels, kernel_size, kernel_size)
-        self.conv_weight = nn.Parameter(torch.empty(*weight_shape, **factory_kwargs))
-        # Batch norm parameters
-        num_features = out_channels
-        self.num_features = num_features
-        self.eps = eps
-        # Initialize
-        self.reset_parameters()
-
-    def forward(self, X):
-        return FusedConv_BN_Relu_2D.apply(X, self.conv_weight, self.eps)
-
-    def reset_parameters(self) -> None:
-        nn.init.kaiming_uniform_(self.conv_weight, a=math.sqrt(5))
-
-# 卷积验证
-weight = torch.rand(5, 3, 3, 3, requires_grad=True, dtype=torch.double)
-X = torch.rand(10, 3, 7, 7, requires_grad=True, dtype=torch.double)
-test = torch.autograd.gradcheck(Conv2D.apply, (X, weight))
-print(test)
-
-# BN
-a = torch.rand(1, 2, 3, 4, requires_grad=True, dtype=torch.double)
-x = torch.rand(5, 2, 3, 4, requires_grad=True, dtype=torch.double)
-b = unsqueeze_all(x)
-print(torch.autograd.gradcheck(BatchNorm.apply, (a,), fast_mode=False))
-
-# relu验证
-a = torch.rand(1, 2, 3, 4, requires_grad=True, dtype=torch.double)
-test2 = torch.autograd.gradcheck(Relu.apply, (a,), fast_mode=False)
-print(test2)
-
-# conv+bn+relu验证
-weight = torch.rand(5, 3, 3, 3, requires_grad=True, dtype=torch.double)
-X = torch.rand(2, 3, 4, 4, requires_grad=True, dtype=torch.double)
-print(torch.autograd.gradcheck(FusedConv_BN_Relu_2D.apply, (X, weight), eps=1e-3))
-
-# # FLOPS测试
-from torchstat import stat
-
-
-
-
-
-
-
-# FLOPS
-class LeNet(nn.Module):
-    def __init__(self, in_channels):
-        super(LeNet, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels, 20, kernel_size=3, stride=1)  # 20x24x24
-        self.bn1 = nn.BatchNorm2d(20)
-        self.relu = nn.ReLU()
-
-    def forward(self, input):
-        out = self.conv1(input)
-        out = self.bn1(out)
-        out = self.relu(out)
-        return out
-
-
-
-class Net1(nn.Module):
-    def __init__(self,in_channels):
-        super(Net1, self).__init__()
-        self.convbn1 = FusedConvBN(in_channels, 20, 3)
-
-    def forward(self, input):
-        out = self.convbn1(input)
-        return out
-
-
-model = LeNet(10)
-model2 = Net1(10)
-
-stat(model, (10, 224, 224))
-stat(model2, (10, 224, 224))
-
 

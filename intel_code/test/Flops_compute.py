@@ -1,4 +1,19 @@
 import numpy as np
+import torch.nn as nn
+
+# FLOPS
+class Net_by_torch(nn.Module):
+    def __init__(self, in_channels):
+        super(Net_by_torch, self).__init__()
+        self.conv1 = nn.Conv2d(in_channels, 20, kernel_size=3, stride=1)  # 20x24x24
+        self.bn1 = nn.BatchNorm2d(20)
+        self.relu = nn.ReLU()
+
+    def forward(self, input):
+        out = self.conv1(input)
+        out = self.bn1(out)
+        out = self.relu(out)
+        return out
 
 def compute_Conv2d_flops(kernal_size, inp, out):
     batch_size = inp.size()[0]
