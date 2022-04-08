@@ -166,13 +166,42 @@ model = models.resnet18()
 # model = FusedConv_BN_Relu_2D_Function()
 stat(model, (3, 224, 224))
 
-# FLOPS测试
-import torch
-from torchvision.models import resnet18
-from thop import profile
-model = resnet18()
-model = FusedConv_BN_Relu_2D_Function()
-input = torch.randn(1, 3, 128, 128)
-flops, params = profile(model, inputs=(input, ))
-print('flops:{}'.format(flops))
-print('params:{}'.format(params))
+# # FLOPS测试
+# import torch
+# from torchvision.models import resnet18
+# from thop import profile
+# model = resnet18()
+# model = FusedConv_BN_Relu_2D_Function()
+# input = torch.randn(1, 3, 128, 128)
+# flops, params = profile(model, inputs=(input, ))
+# print('flops:{}'.format(flops))
+# print('params:{}'.format(params))
+
+
+import torch.nn as nn
+# FLOPS
+class LeNet(nn.Module):
+    def __init__(self, in_channels, num_classes):
+        super(LeNet, self).__init__()
+        self.conv1 = nn.Conv2d(in_channels, 20, kernel_size=5, stride=1)  # 20x24x24
+        self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)  # 20x12x12
+        self.conv2 = nn.Conv2d(20, 50, kernel_size=5, stride=1)  # 50x8x8
+        self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)  # 50x4x4
+        self.fc1 = nn.Linear(50 * 4 * 4, 500)  # 500
+        self.fc2 = nn.Linear(500, num_classes)  # 10
+
+    def forward(self, input):
+        out = self.conv1(input)
+        out = self.pool1(out)
+        out = self.conv2(out)
+        out = self.pool2(out)
+        out = out.reshape(out.size(0), -1)  # pytorch folow NCHW convention
+        out = F.relu(self.fc1(out))
+        out = self.fc2(out)
+        return out
+
+
+model = LeNet(1, 10)
+stat(model, (3, 224, 224))
+
+# http://t.zoukankan.com/xuanyuyt-p-12653041.html
