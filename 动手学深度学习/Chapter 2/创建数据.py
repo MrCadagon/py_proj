@@ -14,7 +14,7 @@ print(x)
 x = torch.tensor([5.5, 300])
 print(x)
 
-# 获取大小like的tensor
+# 获取维度相同的tensor
 x = x.new_ones(5, 3, dtype=torch.float64)
 x = torch.rand_like(x, dtype=torch.float)
 print(x)

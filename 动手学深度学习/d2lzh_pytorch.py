@@ -12,6 +12,21 @@ import zipfile
 import math
 
 
+# 3.2
+def data_iter(batch_size, features, labels):
+    num_examples = len(features)
+    indices = list(range(num_examples))
+    random.shuffle(indices)
+    for i in range(0, num_examples, batch_size):
+        j = torch.LongTensor(indices[i:min(i + batch_size, num_examples)])
+        # index_select(
+        #     dim,
+        #     index
+        # )
+        # index_select表示从哪个维度获取序列数据
+        yield features.index_select(0, j), labels.index_select(0, j)
+
+
 def use_svg_display():
     # 用矢量图显示
     display.set_matplotlib_formats('svg')
@@ -443,6 +458,7 @@ def train_and_predict_rnn(rnn, get_params, init_rnn_state, num_hiddens,
                 print(' -', predict_rnn(prefix, pred_len, rnn, params, init_rnn_state,
                                         num_hiddens, vocab_size, device, idx_to_char, char_to_idx))
 
+
 # 6.5
 # 本类已保存在d2lzh_pytorch包中方便以后使用
 class RNNModel(nn.Module):
@@ -454,24 +470,25 @@ class RNNModel(nn.Module):
         self.dense = nn.Linear(self.hidden_size, vocab_size)
         self.state = None
 
-    def forward(self, inputs, state): # inputs: (batch, seq_len)
+    def forward(self, inputs, state):  # inputs: (batch, seq_len)
         # 获取one-hot向量表示
-        X = to_onehot(inputs, self.vocab_size) # X是个list
+        X = to_onehot(inputs, self.vocab_size)  # X是个list
         Y, self.state = self.rnn(torch.stack(X), state)
         # 全连接层会首先将Y的形状变成(num_steps * batch_size, num_hiddens)，它的输出
         # 形状为(num_steps * batch_size, vocab_size)
         output = self.dense(Y.view(-1, Y.shape[-1]))
         return output, self.state
 
+
 # 6.52训练模型
 def predict_rnn_pytorch(prefix, num_chars, model, vocab_size, device, idx_to_char,
-                      char_to_idx):
+                        char_to_idx):
     state = None
-    output = [char_to_idx[prefix[0]]] # output会记录prefix加上输出
+    output = [char_to_idx[prefix[0]]]  # output会记录prefix加上输出
     for t in range(num_chars + len(prefix) - 1):
         X = torch.tensor([output[-1]], device=device).view(1, 1)
         if state is not None:
-            if isinstance(state, tuple): # LSTM, state:(h, c)
+            if isinstance(state, tuple):  # LSTM, state:(h, c)
                 state = (state[0].to(device), state[1].to(device))
             else:
                 state = state.to(device)
@@ -482,6 +499,5 @@ def predict_rnn_pytorch(prefix, num_chars, model, vocab_size, device, idx_to_cha
         else:
             output.append(int(Y.argmax(dim=1).item()))
     return ''.join([idx_to_char[i] for i in output])
-
 
 # 65

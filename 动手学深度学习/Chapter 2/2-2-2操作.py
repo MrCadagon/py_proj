@@ -2,17 +2,20 @@ import torch
 
 y = torch.rand(5, 3)
 x = torch.rand(5, 3)
+out = x + y
 print(x + y)
-print(x.add_(y))
-print(torch.add(x, y))
+# print(x.add_(y))
+# print(torch.add(x, y))
 output = torch.empty(5, 3)
-print(torch.add(x, y, out=output))
+# print(torch.add(x, y, out=output))
 
+# #索引--引用
 # 索引出来的结果与原数据共享内存，也即修改一个，另一个会跟着修改。
 y = x[0, :]
 y += 1
 print(y, x[0, :])
 
+# #改变大小--引用
 # 注意view()返回的新Tensor与源Tensor虽然可能有不同的size，
 # 但是是共享data的，也即更改其中的一个，另外一个也会跟着改变。
 x = torch.rand(5, 3)
@@ -40,4 +43,3 @@ print(x, y)
 # dot/cross	内积/外积
 # inverse	求逆矩阵
 # svd	奇异值分解
-
