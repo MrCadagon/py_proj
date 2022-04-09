@@ -40,3 +40,5 @@ for epoch in range(num_epochs):
         b.grad.data.zero_()
     train_l_vec = loss(net(features, w, b), labels)
     print(train_l_vec.mean())
+print(w, b)
+print(true_w, true_b)
